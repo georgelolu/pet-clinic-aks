@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: pet-clinic
-          image: YOUR_ACR_NAME.azurecr.io/pet-clinic:1.0
+          image: petclinicacr3595.azurecr.io/pet-clinic:1.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
