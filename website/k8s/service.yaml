@@ -4,10 +4,15 @@ metadata:
   name: pet-clinic
 spec:
   type: LoadBalancer
+  loadBalancerIP: 57.167.3.11
   selector:
-    app: pet-clinic
+    app: pet-clinic-proxy
   ports:
     - name: http
       port: 80
-      targetPort: http
+      targetPort: 80
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 443
       protocol: TCP

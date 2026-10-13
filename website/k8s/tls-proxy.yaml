@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pet-clinic-proxy-config
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name 57.167.3.11;
+
+        location ^~ /.well-known/acme-challenge/ {
+            root /usr/share/nginx/html;
+            default_type text/plain;
+            try_files $uri =404;
+        }
+
+        location / {
+            proxy_pass http://pet-clinic-backend;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+
+    server {
+        listen 443 ssl;
+        server_name 57.167.3.11;
+
+        ssl_certificate /etc/nginx/tls/tls.crt;
+        ssl_certificate_key /etc/nginx/tls/tls.key;
+        ssl_protocols TLSv1.2 TLSv1.3;
+
+        location / {
+            proxy_pass http://pet-clinic-backend;
+            proxy_http_version 1.1;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pet-clinic-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pet-clinic-proxy
+  template:
+    metadata:
+      labels:
+        app: pet-clinic-proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.28-alpine
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          volumeMounts:
+            - name: tls-certificate
+              mountPath: /etc/nginx/tls
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            - name: acme-challenges
+              mountPath: /usr/share/nginx/html/.well-known/acme-challenge
+      volumes:
+        - name: tls-certificate
+          secret:
+            secretName: pet-clinic-tls
+        - name: nginx-config
+          configMap:
+            name: pet-clinic-proxy-config
+        - name: acme-challenges
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pet-clinic-proxy
+spec:
+  type: ClusterIP
+  selector:
+    app: pet-clinic-proxy
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: https
+      protocol: TCP
