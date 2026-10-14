@@ -10,6 +10,8 @@ This directory contains screenshots documenting the Pet Clinic website deployed 
 | `02-pet-clinic-kubernetes-status.png` | Kubernetes Deployment, pod, and Service status. |
 | `03-pet-clinic-azure-aks-cluster.png` | Azure Kubernetes Service cluster configuration. |
 | `04-pet-clinic-acr-image.png` | Pet Clinic container image stored in Azure Container Registry. |
+| `05-pet-clinic-ci-success.png` | Screenshot of the successful Pet Clinic CI workflow. |
+| `06-pet-clinic-cd-success.png` | Screenshot of the successful Pet Clinic CD workflow. |
 
 ## Deployment Details
 

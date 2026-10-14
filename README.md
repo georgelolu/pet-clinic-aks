@@ -176,6 +176,18 @@ Screenshots and supporting details are available in [`docs/evidence/`](docs/evid
 | [Kubernetes status](docs/evidence/02-pet-clinic-kubernetes-status.png) | Application workloads and Service status |
 | [Azure AKS cluster](docs/evidence/03-pet-clinic-azure-aks-cluster.png) | Azure Kubernetes Service environment |
 | [ACR image](docs/evidence/04-pet-clinic-acr-image.png) | Container image in Azure Container Registry |
+| [CI success](docs/evidence/05-pet-clinic-ci-success.png) | Successful GitHub Actions continuous integration run |
+| [CD success](docs/evidence/06-pet-clinic-cd-success.png) | Successful GitHub Actions continuous deployment run |
+
+### CI/CD Pipeline Screenshots
+
+#### Continuous Integration (CI)
+
+![Pet Clinic CI success](docs/evidence/05-pet-clinic-ci-success.png)
+
+#### Continuous Deployment (CD)
+
+![Pet Clinic CD success](docs/evidence/06-pet-clinic-cd-success.png)
 
 ## Reproducing the Verification Checks
 
